@@ -608,7 +608,7 @@ public class GameStateConverter {
         HashMap<String, Object> jsonNode = convertCoordinatesToJson(node.x, node.y);
         String symbol = node.getRoomSymbol(true);
         jsonNode.put("symbol", symbol);
-        if (symbol.equals("E")) {
+        if (symbol != null && symbol.equals("E")) {
             jsonNode.put("is_burning", node.hasEmeraldKey);
         }
         return jsonNode;

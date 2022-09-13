@@ -11,12 +11,10 @@ public class StorePotionPatch {
             method = "purchasePotion"
     )
     public static class StorePotionPurchasePatch {
-
         public static void Postfix() {
             // Without this there's no state change if potion slots are full,
             // or if the player has the Sozu relic.
             GameStateListener.registerStateChange();
         }
-
     }
 }

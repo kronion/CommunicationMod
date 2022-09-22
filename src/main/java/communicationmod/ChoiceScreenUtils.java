@@ -508,7 +508,9 @@ public class ChoiceScreenUtils {
     public static ArrayList<String> getCombatRewardScreenChoices() {
         ArrayList<String> choices = new ArrayList<>();
         for(RewardItem reward : AbstractDungeon.combatRewardScreen.rewards) {
-            choices.add(reward.type.name().toLowerCase());
+            if (!reward.ignoreReward) {
+                choices.add(reward.type.name().toLowerCase());
+            }
         }
         return choices;
     }

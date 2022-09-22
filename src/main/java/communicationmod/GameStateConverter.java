@@ -266,6 +266,11 @@ public class GameStateConverter {
         HashMap<String, Object> state = new HashMap<>();
         ArrayList<Object> rewards = new ArrayList<>();
         for(RewardItem reward : AbstractDungeon.combatRewardScreen.rewards) {
+            // Ignored rewards may not be removed until the next update,
+            // so we make sure to skip them in the meanwhile
+            if (reward.ignoreReward) {
+                continue;
+            }
             HashMap<String, Object> jsonReward = new HashMap<>();
             jsonReward.put("reward_type", reward.type.name());
             switch(reward.type) {

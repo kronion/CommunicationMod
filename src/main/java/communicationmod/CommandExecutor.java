@@ -1,5 +1,7 @@
 package communicationmod;
 
+import basemod.BaseMod;
+import basemod.DevConsole;
 import basemod.ReflectionHacks;
 import com.badlogic.gdx.Gdx;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -31,15 +33,15 @@ public class CommandExecutor {
     private static final Logger logger = LogManager.getLogger(CommandExecutor.class.getName());
 
     public static boolean executeCommand(String command) throws InvalidCommandException {
-        command = command.toLowerCase();
-        String [] tokens = command.split("\\s+");
+        String lower_command = command.toLowerCase();
+        String [] tokens = lower_command.split("\\s+");
         if(tokens.length == 0) {
             return false;
         }
         if (!isCommandAvailable(tokens[0])) {
             throw new InvalidCommandException("Invalid command: " + tokens[0] + ". Possible commands: " + getAvailableCommands());
         }
-        String command_tail = command.substring(tokens[0].length());
+
         switch(tokens[0]) {
             case "play":
                 executePlayCommand(tokens);
@@ -78,6 +80,16 @@ public class CommandExecutor {
             case "wait":
                 executeWaitCommand(tokens);
                 return true;
+            case "basemod":
+                // Use the original command, which hasn't been lower-cased,
+                // because basemod commands are case-sensitive.
+                tokens = command.split("\\s+", 2);
+                if (tokens.length < 2) {
+                    throw new InvalidCommandException("No basemod command provided");
+                }
+                String bm_command = tokens[1];
+                executeBaseModCommand(bm_command);
+                return true;
 
             default:
                 logger.info("This should never happen.");
@@ -112,6 +124,7 @@ public class CommandExecutor {
             availableCommands.add("key");
             availableCommands.add("click");
             availableCommands.add("wait");
+            availableCommands.add("basemod");
         }
         availableCommands.add("state");
         return availableCommands;
@@ -466,6 +479,13 @@ public class CommandExecutor {
             throw new InvalidCommandException(tokens, InvalidCommandException.InvalidCommandFormat.OUT_OF_BOUNDS, tokens[1]);
         }
         GameStateListener.setTimeout(timeout);
+    }
+
+    private static void executeBaseModCommand(String command) {
+        DevConsole console = BaseMod.console;
+        console.setText(command);
+        console.execute();
+        GameStateListener.registerStateChange();
     }
 
     private static int getKeycode(String keyName) {

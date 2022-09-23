@@ -11,12 +11,13 @@ public class RewardItemPatch {
             method = "claimReward"
     )
     public static class RewardItemClaimPatch {
-        public static void Postfix() {
+        public static void Postfix(RewardItem __instance) {
             // Without this there's no state change if potion slots are full.
-            // Note that this patch triggers for all rewards, not just potions,
-            // but it's ok because taking other rewards should trigger a state
-            // change anyway.
-            GameStateListener.registerStateChange();
+            // For rewards other than potions, we expect there will always be
+            // a state change as usual.
+            if (__instance.type == RewardItem.RewardType.POTION) {
+                GameStateListener.registerStateChange();
+            }
         }
     }
 }

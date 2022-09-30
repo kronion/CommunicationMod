@@ -68,6 +68,9 @@ public class CommandExecutor {
             case "start":
                 executeStartCommand(tokens);
                 return true;
+            case "resign":
+                executeResignCommand();
+                return true;
             case "state":
                 executeStateCommand();
                 return false;
@@ -124,6 +127,7 @@ public class CommandExecutor {
             availableCommands.add("key");
             availableCommands.add("click");
             availableCommands.add("wait");
+            availableCommands.add("resign");
             availableCommands.add("basemod");
         }
         availableCommands.add("state");
@@ -392,6 +396,10 @@ public class CommandExecutor {
         manager.setChosenCharacter(selectedClass);
         CardCrawlGame.chosenCharacter = selectedClass;
         GameStateListener.resetStateVariables();
+    }
+
+    private static void executeResignCommand() {
+        CardCrawlGame.startOver();
     }
 
     private static void executeKeyCommand(String[] tokens) throws InvalidCommandException {

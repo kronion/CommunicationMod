@@ -22,6 +22,8 @@ import com.megacrit.cardcrawl.potions.PotionSlot;
 import com.megacrit.cardcrawl.random.Random;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.rooms.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import communicationmod.patches.CardCrawlGamePatch;
 import communicationmod.patches.InputActionPatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -93,6 +95,9 @@ public class CommandExecutor {
                 String bm_command = tokens[1];
                 executeBaseModCommand(bm_command);
                 return true;
+            case "render":
+                executeRenderCommand(tokens);
+                return false;
 
             default:
                 logger.info("This should never happen.");
@@ -131,6 +136,7 @@ public class CommandExecutor {
             availableCommands.add("basemod");
         }
         availableCommands.add("state");
+        availableCommands.add("render");
         return availableCommands;
     }
 
@@ -494,6 +500,14 @@ public class CommandExecutor {
         console.setText(command);
         console.execute();
         GameStateListener.registerStateChange();
+    }
+
+    private static void executeRenderCommand(String[] tokens) throws InvalidCommandException {
+        if(tokens.length < 2) {
+            throw new InvalidCommandException(tokens, InvalidCommandException.InvalidCommandFormat.MISSING_ARGUMENT, " A boolean is required.");
+        }
+        boolean render = Boolean.parseBoolean(tokens[1]);
+        CardCrawlGamePatch.RenderState.render = render;
     }
 
     private static int getKeycode(String keyName) {

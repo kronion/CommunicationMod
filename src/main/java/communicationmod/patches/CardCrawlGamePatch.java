@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 public class CardCrawlGamePatch {
     private static final Logger logger = LogManager.getLogger(CardCrawlGamePatch.class.getName());
 
-    static class RenderState {
-        static boolean render = false;
+    public static class RenderState {
+        public static boolean render = false;
     }
 
     @SpirePatch(

@@ -29,6 +29,7 @@ import com.megacrit.cardcrawl.screens.select.HandCardSelectScreen;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.shop.StorePotion;
 import com.megacrit.cardcrawl.shop.StoreRelic;
+import com.megacrit.cardcrawl.ui.FtueTip;
 import com.megacrit.cardcrawl.ui.buttons.*;
 import com.megacrit.cardcrawl.ui.campfire.AbstractCampfireOption;
 import communicationmod.patches.*;
@@ -60,6 +61,7 @@ public class ChoiceScreenUtils {
         HAND_SELECT,
         GAME_OVER,
         COMPLETE,
+        FTUE,
         NONE
     }
 
@@ -106,6 +108,8 @@ public class ChoiceScreenUtils {
             case UNLOCK:
             case NEOW_UNLOCK:
                 return ChoiceType.GAME_OVER;
+            case FTUE:
+                return ChoiceType.FTUE;
             default:
                 return ChoiceType.NONE;
         }
@@ -312,6 +316,8 @@ public class ChoiceScreenUtils {
                 return true;
             case COMPLETE:
                 return true;
+            case FTUE:
+                return true;
             default:
                 return false;
         }
@@ -339,6 +345,8 @@ public class ChoiceScreenUtils {
                 return "proceed";
             case COMPLETE:
                 return "proceed";
+            case FTUE:
+                return "confirm";
             default:
                 return "confirm";
         }
@@ -373,6 +381,8 @@ public class ChoiceScreenUtils {
                 return;
             case COMPLETE:
                 clickProceedButton();
+            case FTUE:
+                clickFtueButton();
         }
     }
 
@@ -667,6 +677,11 @@ public class ChoiceScreenUtils {
         AbstractDungeon.overlayMenu.proceedButton.show();
         Hitbox hb = (Hitbox) ReflectionHacks.getPrivate(AbstractDungeon.overlayMenu.proceedButton, ProceedButton.class, "hb");
         hb.clicked = true;
+    }
+
+    private static void clickFtueButton() {
+        GotItButton button = (GotItButton) ReflectionHacks.getPrivate(AbstractDungeon.ftue, FtueTip.class, "button");
+        button.hb.clicked = true;
     }
 
     private static void clickCancelButton() {

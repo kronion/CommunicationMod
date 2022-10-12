@@ -1,5 +1,18 @@
-# CommunicationMod
-Slay the Spire mod that provides a protocol for allowing another process to control the game
+# CommunicationModPlus
+Slay the Spire mod that provides a protocol for allowing another process to control the game.
+This project builds on top of the original CommunicationMod project, adding additional features.
+
+## Overview of differences from CommuncationMod
+
+- The "basemod" command has been added to allow processes to invoke basemod console commands.
+- The "resign" command has been added to allow the process to return to the main menu.
+- The "render" command has been added to toggle UI rendering on and off. Disabling rendering
+    may be useful in non-interactive circumstances, like AI training.
+- The presence/absence of each act 4 key has been added to the game state response.
+- Elite nodes in the map state response now have a boolean to indicate if they're burning elites.
+- Attempting to take/buy a potion when impossible (no slots, Sozu) now triggers a state response.
+- Allow FTUEs (a.k.a. tips) to be continued through, so the process doesn't get stuck.
+- Allow shop "combat" rewards, e.g. the Cauldron relic's potions, to be skipped.
 
 ## Requirements
 
@@ -9,9 +22,11 @@ Slay the Spire mod that provides a protocol for allowing another process to cont
 
 ## Setup
 
-1. Copy CommunicationMod.jar to your ModTheSpire mods directory
-2. Run ModTheSpire with CommunicationMod enabled
-3. Edit your newly-created SpireConfig file with the command you want to use with CommunicationMod (see https://github.com/kiooeht/ModTheSpire/wiki/SpireConfig for the location of your config file). Your config file should look something like this (note that certain special characters must be escaped):
+1. Copy CommunicationModPlus.jar to your ModTheSpire mods directory
+2. Run ModTheSpire with CommunicationModPlus enabled
+3. Edit your newly-created SpireConfig file with the command you want to use with CommunicationModPlus
+    (see https://github.com/kiooeht/ModTheSpire/wiki/SpireConfig for the location of your config file).
+    Your config file should look something like this (note that certain special characters must be escaped):
 ```
 #Sat Apr 20 02:49:10 CDT 2019
 command=python C\:\\Path\\To\\Script\\main.py
@@ -19,16 +34,16 @@ command=python C\:\\Path\\To\\Script\\main.py
 
 ## What does this mod do?
 
-CommunicationMod launches a specified process and communicates with this process through stdin and stdout, with the following protocol:
+CommunicationModPlus launches a specified process and communicates with this process through stdin and stdout, with the following protocol:
 
 (Note: all messages are assumed to be ended by a new line '\n')
 
-- After starting the external process, CommunicationMod waits for the process to send "ready" on stdout. If "ready" is not received before a specified timeout, the external process will be terminated.
-- Whenever the state of the game is determined to be stable (no longer changing without external input), CommunicationMod sends a message containing the JSON representation of the current game state to the external process's stdin. For example:
+- After starting the external process, CommunicationModPlus waits for the process to send "ready" on stdout. If "ready" is not received before a specified timeout, the external process will be terminated.
+- Whenever the state of the game is determined to be stable (no longer changing without external input), CommunicationModPlus sends a message containing the JSON representation of the current game state to the external process's stdin. For example:
 ```
 {"available_commands":["play","end","key","click","wait","state"],"ready_for_command":true,"in_game":true,"game_state":{"screen_type":"NONE","screen_state":{},"seed":-3047511808784702860,"combat_state":{"draw_pile":[{"exhausts":false,"is_playable":true,"cost":1,"name":"Strike","id":"Strike_R","type":"ATTACK","ethereal":false,"uuid":"0560233c-41e8-4620-a474-d0ed627354bd","upgrades":0,"rarity":"BASIC","has_target":true},{"exhausts":false,"is_playable":true,"cost":1,"name":"Defend","id":"Defend_R","type":"SKILL","ethereal":false,"uuid":"f8adc2a6-4d1c-4524-9044-9e2bfacf4256","upgrades":0,"rarity":"BASIC","has_target":false},{"exhausts":false,"is_playable":true,"cost":1,"name":"Strike","id":"Strike_R","type":"ATTACK","ethereal":false,"uuid":"c6594538-debc-4085-81be-3b20a5d44062","upgrades":0,"rarity":"BASIC","has_target":true},{"exhausts":false,"is_playable":false,"cost":-2,"name":"Ascender\u0027s Bane","id":"AscendersBane","type":"CURSE","ethereal":true,"uuid":"da41cd4b-6eda-4020-a031-ad870a52b0e1","upgrades":0,"rarity":"SPECIAL","has_target":false},{"exhausts":false,"is_playable":true,"cost":1,"name":"Strike","id":"Strike_R","type":"ATTACK","ethereal":false,"uuid":"b54d5d98-f074-4f71-b705-f071f1d44fff","upgrades":0,"rarity":"BASIC","has_target":true},{"exhausts":false,"is_playable":true,"cost":1,"name":"Defend","id":"Defend_R","type":"SKILL","ethereal":false,"uuid":"9c10951d-0c08-46bd-bc5f-be2e1b9d53f2","upgrades":0,"rarity":"BASIC","has_target":false}],"discard_pile":[],"exhaust_pile":[],"cards_discarded_this_turn":0,"times_damaged":0,"monsters":[{"is_gone":false,"move_hits":1,"move_base_damage":12,"half_dead":false,"move_adjusted_damage":-1,"max_hp":46,"intent":"DEBUG","move_id":1,"name":"Jaw Worm","current_hp":1,"block":0,"id":"JawWorm","powers":[]}],"turn":1,"limbo":[],"hand":[{"exhausts":false,"is_playable":true,"cost":1,"name":"Strike","id":"Strike_R","type":"ATTACK","ethereal":false,"uuid":"7b54caef-9c56-4134-82a2-be8f1d5c435f","upgrades":0,"rarity":"BASIC","has_target":true},{"exhausts":false,"is_playable":true,"cost":1,"name":"Strike","id":"Strike_R","type":"ATTACK","ethereal":false,"uuid":"5f9bba1a-4c54-4be7-b387-1992937c5717","upgrades":0,"rarity":"BASIC","has_target":true},{"exhausts":false,"is_playable":true,"cost":1,"name":"Defend","id":"Defend_R","type":"SKILL","ethereal":false,"uuid":"0dbea551-c9ae-4228-8821-74e2ffd04889","upgrades":0,"rarity":"BASIC","has_target":false},{"exhausts":false,"is_playable":true,"cost":1,"name":"Defend","id":"Defend_R","type":"SKILL","ethereal":false,"uuid":"612c16f7-f8f7-4253-88bb-ab4813d34b69","upgrades":0,"rarity":"BASIC","has_target":false},{"exhausts":false,"is_playable":true,"cost":2,"name":"Bash","id":"Bash","type":"ATTACK","ethereal":false,"uuid":"41e3754b-d2e3-40b4-a83b-f165b1943ec3","upgrades":0,"rarity":"BASIC","has_target":true}],"player":{"orbs":[],"current_hp":68,"block":0,"max_hp":75,"powers":[],"energy":3}},"deck":[{"exhausts":false,"is_playable":false,"cost":-2,"name":"Ascender\u0027s Bane","id":"AscendersBane","type":"CURSE","ethereal":true,"uuid":"da41cd4b-6eda-4020-a031-ad870a52b0e1","upgrades":0,"rarity":"SPECIAL","has_target":false},{"exhausts":false,"is_playable":true,"cost":1,"name":"Strike","id":"Strike_R","type":"ATTACK","ethereal":false,"uuid":"7b54caef-9c56-4134-82a2-be8f1d5c435f","upgrades":0,"rarity":"BASIC","has_target":true},{"exhausts":false,"is_playable":true,"cost":1,"name":"Strike","id":"Strike_R","type":"ATTACK","ethereal":false,"uuid":"c6594538-debc-4085-81be-3b20a5d44062","upgrades":0,"rarity":"BASIC","has_target":true},{"exhausts":false,"is_playable":true,"cost":1,"name":"Strike","id":"Strike_R","type":"ATTACK","ethereal":false,"uuid":"5f9bba1a-4c54-4be7-b387-1992937c5717","upgrades":0,"rarity":"BASIC","has_target":true},{"exhausts":false,"is_playable":true,"cost":1,"name":"Strike","id":"Strike_R","type":"ATTACK","ethereal":false,"uuid":"0560233c-41e8-4620-a474-d0ed627354bd","upgrades":0,"rarity":"BASIC","has_target":true},{"exhausts":false,"is_playable":true,"cost":1,"name":"Strike","id":"Strike_R","type":"ATTACK","ethereal":false,"uuid":"b54d5d98-f074-4f71-b705-f071f1d44fff","upgrades":0,"rarity":"BASIC","has_target":true},{"exhausts":false,"is_playable":true,"cost":1,"name":"Defend","id":"Defend_R","type":"SKILL","ethereal":false,"uuid":"9c10951d-0c08-46bd-bc5f-be2e1b9d53f2","upgrades":0,"rarity":"BASIC","has_target":false},{"exhausts":false,"is_playable":true,"cost":1,"name":"Defend","id":"Defend_R","type":"SKILL","ethereal":false,"uuid":"0dbea551-c9ae-4228-8821-74e2ffd04889","upgrades":0,"rarity":"BASIC","has_target":false},{"exhausts":false,"is_playable":true,"cost":1,"name":"Defend","id":"Defend_R","type":"SKILL","ethereal":false,"uuid":"612c16f7-f8f7-4253-88bb-ab4813d34b69","upgrades":0,"rarity":"BASIC","has_target":false},{"exhausts":false,"is_playable":true,"cost":1,"name":"Defend","id":"Defend_R","type":"SKILL","ethereal":false,"uuid":"f8adc2a6-4d1c-4524-9044-9e2bfacf4256","upgrades":0,"rarity":"BASIC","has_target":false},{"exhausts":false,"is_playable":true,"cost":2,"name":"Bash","id":"Bash","type":"ATTACK","ethereal":false,"uuid":"41e3754b-d2e3-40b4-a83b-f165b1943ec3","upgrades":0,"rarity":"BASIC","has_target":true}],"relics":[{"name":"Burning Blood","id":"Burning Blood","counter":-1},{"name":"Neow\u0027s Lament","id":"NeowsBlessing","counter":2}],"max_hp":75,"act_boss":"The Guardian","gold":99,"action_phase":"WAITING_ON_USER","act":1,"screen_name":"NONE","room_phase":"COMBAT","is_screen_up":false,"potions":[{"requires_target":false,"can_use":false,"can_discard":false,"name":"Potion Slot","id":"Potion Slot"},{"requires_target":false,"can_use":false,"can_discard":false,"name":"Potion Slot","id":"Potion Slot"}],"current_hp":68,"floor":1,"ascension_level":20,"class":"IRONCLAD","map":[{"symbol":"M","children":[{"x":0,"y":1}],"x":1,"y":0,"parents":[]},{"symbol":"M","children":[{"x":2,"y":1}],"x":2,"y":0,"parents":[]},{"symbol":"M","children":[{"x":4,"y":1}],"x":3,"y":0,"parents":[]},{"symbol":"M","children":[{"x":5,"y":1}],"x":6,"y":0,"parents":[]},{"symbol":"M","children":[{"x":1,"y":2}],"x":0,"y":1,"parents":[]},{"symbol":"M","children":[{"x":1,"y":2},{"x":2,"y":2}],"x":2,"y":1,"parents":[]},{"symbol":"?","children":[{"x":3,"y":2}],"x":4,"y":1,"parents":[]},{"symbol":"$","children":[{"x":4,"y":2}],"x":5,"y":1,"parents":[]},{"symbol":"M","children":[{"x":1,"y":3},{"x":2,"y":3}],"x":1,"y":2,"parents":[]},{"symbol":"?","children":[{"x":2,"y":3},{"x":3,"y":3}],"x":2,"y":2,"parents":[]},{"symbol":"M","children":[{"x":3,"y":3}],"x":3,"y":2,"parents":[]},{"symbol":"M","children":[{"x":5,"y":3}],"x":4,"y":2,"parents":[]},{"symbol":"?","children":[{"x":1,"y":4}],"x":1,"y":3,"parents":[]},{"symbol":"M","children":[{"x":3,"y":4}],"x":2,"y":3,"parents":[]},{"symbol":"?","children":[{"x":3,"y":4}],"x":3,"y":3,"parents":[]},{"symbol":"M","children":[{"x":4,"y":4}],"x":5,"y":3,"parents":[]},{"symbol":"M","children":[{"x":1,"y":5}],"x":1,"y":4,"parents":[]},{"symbol":"?","children":[{"x":2,"y":5},{"x":3,"y":5}],"x":3,"y":4,"parents":[]},{"symbol":"M","children":[{"x":3,"y":5}],"x":4,"y":4,"parents":[]},{"symbol":"E","children":[{"x":1,"y":6}],"x":1,"y":5,"parents":[]},{"symbol":"E","children":[{"x":1,"y":6},{"x":2,"y":6}],"x":2,"y":5,"parents":[]},{"symbol":"R","children":[{"x":2,"y":6},{"x":3,"y":6}],"x":3,"y":5,"parents":[]},{"symbol":"R","children":[{"x":2,"y":7}],"x":1,"y":6,"parents":[]},{"symbol":"M","children":[{"x":2,"y":7},{"x":3,"y":7}],"x":2,"y":6,"parents":[]},{"symbol":"E","children":[{"x":3,"y":7}],"x":3,"y":6,"parents":[]},{"symbol":"E","children":[{"x":1,"y":8},{"x":2,"y":8},{"x":3,"y":8}],"x":2,"y":7,"parents":[]},{"symbol":"R","children":[{"x":3,"y":8}],"x":3,"y":7,"parents":[]},{"symbol":"T","children":[{"x":0,"y":9}],"x":1,"y":8,"parents":[]},{"symbol":"T","children":[{"x":1,"y":9}],"x":2,"y":8,"parents":[]},{"symbol":"T","children":[{"x":2,"y":9},{"x":3,"y":9},{"x":4,"y":9}],"x":3,"y":8,"parents":[]},{"symbol":"R","children":[{"x":1,"y":10}],"x":0,"y":9,"parents":[]},{"symbol":"M","children":[{"x":1,"y":10}],"x":1,"y":9,"parents":[]},{"symbol":"M","children":[{"x":1,"y":10},{"x":3,"y":10}],"x":2,"y":9,"parents":[]},{"symbol":"R","children":[{"x":4,"y":10}],"x":3,"y":9,"parents":[]},{"symbol":"?","children":[{"x":4,"y":10}],"x":4,"y":9,"parents":[]},{"symbol":"?","children":[{"x":0,"y":11},{"x":1,"y":11}],"x":1,"y":10,"parents":[]},{"symbol":"R","children":[{"x":3,"y":11}],"x":3,"y":10,"parents":[]},{"symbol":"E","children":[{"x":3,"y":11},{"x":4,"y":11}],"x":4,"y":10,"parents":[]},{"symbol":"$","children":[{"x":0,"y":12}],"x":0,"y":11,"parents":[]},{"symbol":"M","children":[{"x":1,"y":12}],"x":1,"y":11,"parents":[]},{"symbol":"M","children":[{"x":3,"y":12},{"x":4,"y":12}],"x":3,"y":11,"parents":[]},{"symbol":"?","children":[{"x":4,"y":12}],"x":4,"y":11,"parents":[]},{"symbol":"E","children":[{"x":0,"y":13}],"x":0,"y":12,"parents":[]},{"symbol":"M","children":[{"x":1,"y":13}],"x":1,"y":12,"parents":[]},{"symbol":"?","children":[{"x":3,"y":13}],"x":3,"y":12,"parents":[]},{"symbol":"M","children":[{"x":3,"y":13}],"x":4,"y":12,"parents":[]},{"symbol":"?","children":[{"x":1,"y":14}],"x":0,"y":13,"parents":[]},{"symbol":"M","children":[{"x":1,"y":14}],"x":1,"y":13,"parents":[]},{"symbol":"?","children":[{"x":2,"y":14},{"x":3,"y":14}],"x":3,"y":13,"parents":[]},{"symbol":"R","children":[{"x":3,"y":16}],"x":1,"y":14,"parents":[]},{"symbol":"R","children":[{"x":3,"y":16}],"x":2,"y":14,"parents":[]},{"symbol":"R","children":[{"x":3,"y":16}],"x":3,"y":14,"parents":[]}],"room_type":"MonsterRoom"}}
 ```
-- CommunicationMod then waits for a message back from the external process, containing a command to be executed. Possible commands are:
+- CommunicationModPlus then waits for a message back from the external process, containing a command to be executed. Possible commands are:
   - START PlayerClass [AscensionLevel] [Seed]
     - Starts a new game with the selected class, on the selected Ascension level (default 0), with the selected seed (random seed if omitted).
     - Seeds are alphanumeric, as displayed in game.
@@ -76,6 +91,16 @@ CommunicationMod launches a specified process and communicates with this process
   - STATE
     - Causes CommunicationMod to immediately send a JSON representation of the current state to the external process, whether or not the game state is stable.
     - Always available.
+  - RESIGN
+    - Ends the current run and returns to the main menu.
+    - Only available in a run
+  - BASEMOD ConsoleCommand
+    - Executes the provided command in the basemod console. See the basemod documentation for valid commands.
+    - Only available in a run
+  - RENDER True|False
+    - Used to enable or disable rendering.
+    - When False, the game UI will freeze in place. When True, the game runs as normal.
+    - Always available
 - Upon receiving a command, CommunicationMod will execute it, and reply again with a JSON representation of the state of the game, when it is next stable.
 - If there was an error in executing the command, CommunicationMod will instead send an error message of the form:
 ```
@@ -84,7 +109,6 @@ CommunicationMod launches a specified process and communicates with this process
 
 ## Known issues and limitations, to be hopefully fixed soon:
 - The full state of the Match and Keep event is not transmitted.
-- There is no feedback or state change if you attempt to take or buy a potion while your potion inventory is full. Beware!
 - Unselecting cards in hand select screens is not supported.
 - Several actions do not currently register a state change if they are performed manually in game.
 - You must manually edit the mod's config file to set the command for your external process.

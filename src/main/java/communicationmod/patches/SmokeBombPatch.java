@@ -8,21 +8,16 @@ import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import communicationmod.GameStateListener;
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
 public class SmokeBombPatch {
-    static boolean waiting = false;
-
     @SpirePatch(
         clz = SmokeBomb.class,
         method = "use"
     )
     public static class BlockOnUse {
         public static void Prefix() {
-            waiting = true;
             GameStateListener.blockStateUpdate();
         }
     }
@@ -36,10 +31,7 @@ public class SmokeBombPatch {
         locator=LocatorAfter.class
         )
         public static void Insert(AbstractRoom _instance) {
-            Logger logger = LogManager.getLogger(SmokeBombPatch.class.getName());
-            logger.info("HERE");
             float timer = ReflectionHacks.getPrivate(_instance, AbstractRoom.class, "endBattleTimer");
-            logger.info(timer);
             if (timer < 0.0f) {
                 GameStateListener.resumeStateUpdate();
             }

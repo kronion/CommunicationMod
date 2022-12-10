@@ -869,7 +869,7 @@ public class GameStateConverter {
         }
         jsonPotion.put("can_use", canUse);
         jsonPotion.put("can_discard", canDiscard);
-        jsonPotion.put("requires_target", potion.isThrown);
+        jsonPotion.put("requires_target", potion.targetRequired);
         return jsonPotion;
     }
 

@@ -241,11 +241,18 @@ public class CommandExecutor {
             }
         }
         AbstractMonster target_monster = null;
+        ArrayList<AbstractMonster> liveMonsters = new ArrayList();
+        for (AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters) {
+            if (!m.isDeadOrEscaped()) {
+                liveMonsters.add(m);
+            }
+        }
+
         if (monster_index != -1) {
-            if (monster_index < 0 || monster_index >= AbstractDungeon.getCurrRoom().monsters.monsters.size()) {
+            if (monster_index < 0 || monster_index >= liveMonsters.size()) {
                 throw new InvalidCommandException(tokens, InvalidCommandException.InvalidCommandFormat.OUT_OF_BOUNDS, Integer.toString(monster_index));
             } else {
-                target_monster = AbstractDungeon.getCurrRoom().monsters.monsters.get(monster_index);
+                target_monster = liveMonsters.get(monster_index);
             }
         }
         if((card_index < 1) || (card_index > AbstractDungeon.player.hand.size()) || !(AbstractDungeon.player.hand.group.get(card_index - 1).canUse(AbstractDungeon.player, target_monster))) {

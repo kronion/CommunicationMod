@@ -515,7 +515,9 @@ public class GameStateConverter {
         HashMap<String, Object> state = new HashMap<>();
         ArrayList<Object> monsters = new ArrayList<>();
         for(AbstractMonster monster : AbstractDungeon.getCurrRoom().monsters.monsters) {
-            monsters.add(convertMonsterToJson(monster));
+            if (!monster.isDeadOrEscaped()) {
+                monsters.add(convertMonsterToJson(monster));
+            }
         }
         state.put("monsters", monsters);
         ArrayList<Object> draw_pile = new ArrayList<>();
@@ -668,8 +670,6 @@ public class GameStateConverter {
      * "move_hits" (int): The number of hits done by the current attack
      * "last_move_id" (int): The move id byte for the monster's previous move
      * "second_last_move_id" (int): The move id byte from 2 moves ago
-     * "half_dead" (boolean): Whether the monster is half dead
-     * "is_gone" (boolean): Whether the monster is dead or has run away
      * "powers" (list): The monster's current powers
      * Note: If the player has Runic Dome, intent will always return NONE
      * @param monster The monster to convert
@@ -709,8 +709,6 @@ public class GameStateConverter {
         if(monster.moveHistory.size() >= 3) {
             jsonMonster.put("second_last_move_id", monster.moveHistory.get(monster.moveHistory.size() - 3));
         }
-        jsonMonster.put("half_dead", monster.halfDead);
-        jsonMonster.put("is_gone", monster.isDeadOrEscaped());
         jsonMonster.put("block", monster.currentBlock);
         jsonMonster.put("powers", convertCreaturePowersToJson(monster));
         return jsonMonster;

@@ -10,6 +10,7 @@ This project builds on top of the original CommunicationMod project, adding addi
     may be useful in non-interactive circumstances, like AI training.
 - The presence/absence of each act 4 key has been added to the game state response.
 - Elite nodes in the map state response now have a boolean to indicate if they're burning elites.
+- Dead/escaped enemies are no longer included in the state response.
 - Attempting to take/buy a potion when impossible (no slots, Sozu) now triggers a state response.
 - Allow FTUEs (a.k.a. tips) to be continued through, so the process doesn't get stuck.
 - Allow shop "combat" rewards, e.g. the Cauldron relic's potions, to be skipped.

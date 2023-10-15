@@ -7,6 +7,7 @@ import com.megacrit.cardcrawl.neow.NeowRoom;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import com.megacrit.cardcrawl.rooms.EventRoom;
 import com.megacrit.cardcrawl.rooms.VictoryRoom;
+import communicationmod.patches.SmokeBombPatch;
 
 public class GameStateListener {
     private static AbstractDungeon.CurrentScreen previousScreen = null;
@@ -98,6 +99,9 @@ public class GameStateListener {
      */
     private static boolean hasDungeonStateChanged() {
         if (blocked) {
+            return false;
+        }
+        if (SmokeBombPatch.smoked && !AbstractDungeon.isScreenUp) {
             return false;
         }
         hasPresentedOutOfGameState = false;

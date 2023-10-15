@@ -3,7 +3,9 @@ package communicationmod.patches;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.evacipated.cardcrawl.modthespire.patcher.PatchingException;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.screens.CardRewardScreen;
+import communicationmod.GameStateListener;
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
 
@@ -62,6 +64,31 @@ public class CardRewardScreenPatch {
             public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
                 Matcher matcher = new Matcher.FieldAccessMatcher(CardRewardScreen.class, "skipButton");
                 return LineFinder.findInOrder(ctMethodToPatch, new ArrayList<Matcher>(), matcher);
+            }
+        }
+
+    }
+
+    @SpirePatch(
+            clz=CardRewardScreen.class,
+            method = "cardSelectUpdate"
+    )
+    public static class CloseScreenPatch {
+
+        // Always register a state change after taking a card
+        @SpireInsertPatch(
+                locator=Locator.class
+        )
+        public static void Insert() {
+            GameStateListener.registerStateChange();
+        }
+
+        private static class Locator extends SpireInsertLocator {
+            public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
+                Matcher matcher = new Matcher.MethodCallMatcher(AbstractDungeon.class, "closeCurrentScreen");
+                int[] result = LineFinder.findInOrder(ctMethodToPatch, new ArrayList<Matcher>(), matcher);
+                result[0] += 1;
+                return result;
             }
         }
 

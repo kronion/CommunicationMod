@@ -266,6 +266,9 @@ public class ChoiceScreenUtils {
     private static void pressCancelButton(ChoiceType choiceType) {
         switch (choiceType) {
             case CARD_REWARD:
+                AbstractDungeon.closeCurrentScreen();
+                GameStateListener.registerStateChange();  // Should always be a state change, even if another card reward follows (e.g. drank two card potions back-to-back)
+                return;
             case COMBAT_REWARD:
                 AbstractDungeon.closeCurrentScreen();
                 return;

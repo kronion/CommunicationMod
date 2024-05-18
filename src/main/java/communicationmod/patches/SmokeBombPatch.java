@@ -12,13 +12,15 @@ import javassist.CtBehavior;
 import java.util.ArrayList;
 
 public class SmokeBombPatch {
+    public static boolean smoked = false;
+
     @SpirePatch(
         clz = SmokeBomb.class,
         method = "use"
     )
     public static class BlockOnUse {
         public static void Prefix() {
-            GameStateListener.blockStateUpdate();
+            smoked = true;
         }
     }
 
@@ -33,7 +35,7 @@ public class SmokeBombPatch {
         public static void Insert(AbstractRoom _instance) {
             float timer = ReflectionHacks.getPrivate(_instance, AbstractRoom.class, "endBattleTimer");
             if (timer < 0.0f) {
-                GameStateListener.resumeStateUpdate();
+                smoked = false;
             }
         }
 

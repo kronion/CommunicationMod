@@ -52,6 +52,60 @@ public class GremlinMatchGamePatch {
 
     @SpirePatch(
             clz=GremlinMatchGame.class,
+            method="update"
+    )
+    public static class FixUpdateHangingPatch {
+        @SpireInsertPatch(
+                locator=Locator.class
+        )
+        public static void Insert(GremlinMatchGame _instance) {
+            float waitTimer = (float) ReflectionHacks.getPrivate(_instance, GremlinMatchGame.class, "waitTimer");
+
+            // If the wait timer has already become non-positive, we'll never enter the code block that triggers
+            // the end of the event. This is a bug in StS itself. We set waitTimer back to a slightly positive value
+            // to enter the block that will ticket it down (presumably to a negative value) and end the event.
+            if (waitTimer <= 0.0F) {
+                ReflectionHacks.setPrivate(_instance, GremlinMatchGame.class, "waitTimer", 0.001F);
+            }
+        }
+
+        private static class Locator extends SpireInsertLocator {
+            public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
+                Matcher matcher = new Matcher.FieldAccessMatcher(GremlinMatchGame.class, "waitTimer");
+                return LineFinder.findInOrder(ctMethodToPatch, new ArrayList<Matcher>(), matcher);
+            }
+        }
+    }
+
+    @SpirePatch(
+            clz=GremlinMatchGame.class,
+            method="updateMatchGameLogic"
+    )
+    public static class FixUpdateMatchHangingPatch {
+        @SpireInsertPatch(
+                locator=Locator.class
+        )
+        public static void Insert(GremlinMatchGame _instance) {
+            float waitTimer = (float) ReflectionHacks.getPrivate(_instance, GremlinMatchGame.class, "waitTimer");
+
+            // If the wait timer has already become non-positive, we'll never enter the code block that triggers
+            // the end of the event. This is a bug in StS itself. We set waitTimer back to a slightly positive value
+            // to enter the block that will ticket it down (presumably to a negative value) and end the event.
+            if (waitTimer == 0.0F) {
+                ReflectionHacks.setPrivate(_instance, GremlinMatchGame.class, "waitTimer", 0.001F);
+            }
+        }
+
+        private static class Locator extends SpireInsertLocator {
+            public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
+                Matcher matcher = new Matcher.FieldAccessMatcher(GremlinMatchGame.class, "gameDone");
+                return LineFinder.findInOrder(ctMethodToPatch, new ArrayList<Matcher>(), matcher);
+            }
+        }
+    }
+
+    @SpirePatch(
+            clz=GremlinMatchGame.class,
             method="updateMatchGameLogic"
     )
     public static class HoverCardPatch {

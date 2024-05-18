@@ -381,8 +381,10 @@ public class ChoiceScreenUtils {
                 return;
             case COMPLETE:
                 clickProceedButton();
+                return;
             case FTUE:
                 clickFtueButton();
+                return;
         }
     }
 
